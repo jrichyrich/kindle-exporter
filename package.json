@@ -1,0 +1,117 @@
+{
+  "name": "kindle-exporter",
+  "version": "0.1.0",
+  "description": "Export any Kindle book you own as text, PDF, EPUB, Markdown, or as a custom AI-narrated audiobook",
+  "author": "Jason Richardson",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrichyrich/kindle-exporter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jrichyrich/kindle-exporter/issues"
+  },
+  "homepage": "https://github.com/jrichyrich/kindle-exporter#readme",
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "kindle-exporter": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/cli.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run src/**/*.test.ts",
+    "test:integration": "vitest run tests/integration/**/*.test.ts",
+    "test:smoke": "vitest run tests/smoke/**/*.test.ts",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit",
+    "prepare": "simple-git-hooks",
+    "setup": "bash scripts/setup.sh",
+    "preflight": "bash scripts/preflight.sh"
+  },
+  "keywords": [
+    "kindle",
+    "ebook",
+    "export",
+    "ocr",
+    "pdf",
+    "epub",
+    "audiobook",
+    "tts",
+    "vision-model",
+    "llm"
+  ],
+  "dependencies": {
+    "@huggingface/hub": "^0.15.0",
+    "@huggingface/transformers": "^3.0.0",
+    "@inquirer/prompts": "^7.0.0",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "dotenv": "^16.4.5",
+    "fluent-ffmpeg": "^2.1.3",
+    "hash-object": "^5.0.1",
+    "hh-mm-ss": "^1.2.0",
+    "ky": "^1.12.0",
+    "node-id3": "^0.2.6",
+    "openai-fetch": "^3.4.2",
+    "ora": "^7.0.1",
+    "p-map": "^7.0.3",
+    "p-race": "^3.1.0",
+    "patchright": "^1.56.1",
+    "pdfkit": "^0.15.0",
+    "playwright": "^1.56.1",
+    "playwright-core": "^1.56.1",
+    "sharp": "^0.34.4",
+    "sort-keys": "^6.0.0",
+    "tar": "^7.5.1",
+    "tempy": "^3.1.0",
+    "tslib": "^2.6.2",
+    "type-fest": "^5.1.0",
+    "unrealspeech-api": "^1.0.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@fisch0920/config": "^1.3.4",
+    "@types/fluent-ffmpeg": "^2.1.26",
+    "@types/hh-mm-ss": "^1.2.3",
+    "@types/node": "^24.9.1",
+    "@types/pdfkit": "^0.13.5",
+    "del-cli": "^7.0.0",
+    "delay": "^6.0.0",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "lint-staged": "^16.2.5",
+    "npm-run-all2": "^8.0.4",
+    "prettier": "^3.6.2",
+    "simple-git-hooks": "^2.13.1",
+    "tsx": "^4.7.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.14"
+  },
+  "optionalDependencies": {
+    "@tensorflow/tfjs-node-gpu": "^4.18.0",
+    "onnxruntime-node": "^1.17.0",
+    "python-shell": "^5.0.0"
+  },
+  "prettier": "@fisch0920/config/prettier",
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --ignore-unknown --write",
+      "eslint --cache --fix"
+    ]
+  }
+}

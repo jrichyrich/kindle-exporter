@@ -1,0 +1,136 @@
+# Project Status
+
+**Version**: 0.1.0-pre-alpha
+**Last Updated**: 2025-01-15
+**Phase**: Foundation Setup (Phase 1 of 10)
+
+## Overview
+
+This project is merging two existing Kindle export tools into a unified, feature-rich exporter. We're following a comprehensive [MERGE_PLAN.md](MERGE_PLAN.md) with a structured 8-week development timeline.
+
+## Current Status: 🚧 Pre-Alpha
+
+### Completed ✅
+- [x] Comprehensive merge plan created
+- [x] Project architecture designed
+- [x] Repository initialized
+- [x] Basic project structure created
+- [x] Documentation framework established
+
+### In Progress 🔄
+- [ ] TypeScript configuration finalized
+- [ ] Dependency integration
+- [ ] Type system unification
+- [ ] Build system setup
+
+### Upcoming (Phase 1) 📋
+- [ ] Merge package.json dependencies
+- [ ] Resolve dependency conflicts
+- [ ] Set up ESLint + Prettier
+- [ ] Configure Git hooks
+- [ ] Initial CI/CD pipeline
+
+## Milestone Tracker
+
+| Milestone | Target | Status | Progress |
+|-----------|--------|--------|----------|
+| M1: Foundation Complete | Day 5 | 🔄 In Progress | 60% |
+| M2: OCR Providers Integrated | Day 10 | ⏳ Pending | 0% |
+| M3: Metadata Extraction Working | Day 14 | ⏳ Pending | 0% |
+| M4: All Export Formats | Day 21 | ⏳ Pending | 0% |
+| M5: Feature Complete | Day 28 | ⏳ Pending | 0% |
+| M6: Beta Release | Day 35 | ⏳ Pending | 0% |
+| M7: v1.0 Release | Day 40 | ⏳ Pending | 0% |
+
+## Development Timeline
+
+### Week 1-2 (Days 1-10): Core Infrastructure
+- Foundation setup
+- Type system integration
+- OCR provider integration (all 4 providers)
+
+### Week 2-3 (Days 10-21): Features
+- Metadata extraction
+- Export format extensions
+- Automation enhancements
+
+### Week 3-4 (Days 21-28): Polish
+- CLI & UX improvements
+- Testing & QA
+
+### Week 4-6 (Days 28-40): Release Prep
+- Documentation
+- Examples
+- CI/CD
+- v1.0 release
+
+## Key Features Status
+
+| Feature | Status | Priority | Notes |
+|---------|--------|----------|-------|
+| **OCR Providers** |
+| Live Text (macOS) | ⏳ Planned | P1 | From private repo |
+| Tesseract | ⏳ Planned | P1 | From private repo |
+| OpenAI Vision | ⏳ Planned | P1 | From public repo |
+| Local Vision Models | ⏳ Planned | P2 | NEW: Qwen, LLaMA, Pixtral |
+| **Export Formats** |
+| Plain Text | ⏳ Planned | P1 | Both repos |
+| PDF with TOC | ⏳ Planned | P1 | From public repo |
+| Searchable PDF | ⏳ Planned | P2 | From private repo |
+| Markdown | ⏳ Planned | P2 | From public repo |
+| EPUB | ⏳ Planned | P2 | From public repo |
+| Audiobook | ⏳ Planned | P3 | From public repo |
+| **Core Features** |
+| Browser Automation | ⏳ Planned | P1 | Both repos |
+| Resume Capability | ⏳ Planned | P1 | From private repo |
+| Metadata Extraction | ⏳ Planned | P1 | From public repo |
+| Batch Processing | ⏳ Planned | P1 | From private repo |
+| Repair Tool | ⏳ Planned | P2 | From private repo |
+| **UX Features** |
+| Unified CLI | ⏳ Planned | P1 | From private repo |
+| Interactive Prompts | ⏳ Planned | P2 | From private repo |
+| Progress Indicators | ⏳ Planned | P2 | From private repo |
+| Structured Logging | ⏳ Planned | P2 | From private repo |
+
+Legend:
+- ✅ Completed
+- 🔄 In Progress
+- ⏳ Planned
+- ❌ Blocked
+- 💡 Future Enhancement
+
+## Current Focus
+
+**This Week**:
+1. Complete foundation setup
+2. Merge dependencies
+3. Unify type system
+4. Start OCR provider integration
+
+## Known Issues
+
+None yet - project just started!
+
+## Contributing
+
+Not accepting external contributions yet. Will open up after v0.1.0.
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for future contribution guidelines.
+
+## Communication
+
+- **Issues**: GitHub Issues (not active yet)
+- **Discussions**: GitHub Discussions (not active yet)
+- **Updates**: This STATUS.md file
+
+## Next Update
+
+Expected: When Phase 1 (Foundation) is complete (Day 5)
+
+---
+
+**Legend**:
+- 🚧 Pre-Alpha: Active development, not ready for use
+- 🎯 Alpha: Core features working, testing needed
+- 🔍 Beta: Feature complete, public testing
+- 🚀 Stable: Production ready, v1.0 released

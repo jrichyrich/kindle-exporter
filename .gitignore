@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Exports (user data)
+exports/
+
+# Browser profiles
+.playwright-profile/
+playwright-profile/
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Model cache (local vision models)
+.cache/
+models/
+
+# Python (if using Python bridge)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Debug
+.vscode-test/
