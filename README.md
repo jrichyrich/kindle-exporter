@@ -21,10 +21,9 @@ Kindle Exporter is a comprehensive tool that exports your Kindle books using bro
   - **Cloud**: OpenAI Vision Models (GPT-4 Vision)
   - **Local Vision Models**: Qwen2-VL, LLaMA Vision, Pixtral (FREE, high accuracy!)
 - 📚 **Rich Metadata**: Full table of contents, chapter boundaries, Kindle sync positions
-- 🎨 **OCR Optimization**: Automatic canvas widening and single-column layout for better accuracy
+- 🎨 **Smart Screenshot Capture**: Canvas clipping to exclude UI elements
 - 💻 **Clean CLI**: Simple command-line interface with progress indicators
 - 🌐 **Browser Automation**: Uses Playwright for reliable Kindle Cloud Reader access
-- 📊 **Smart Screenshot Capture**: Canvas clipping to exclude UI elements
 - ✨ **Production Ready**: Tested with real books, all core features working
 
 ## Quick Start
@@ -214,22 +213,9 @@ EPUB format via Calibre (requires `ebook-convert` installed).
 
 1. **Browser Automation**: Launches Chrome with Playwright and navigates to Kindle Cloud Reader
 2. **Metadata Extraction**: Captures book metadata, table of contents, and chapter information
-3. **Canvas Optimization**: Automatically widens reading canvas and forces single-column layout for better OCR
-4. **Screenshot Capture**: Takes screenshots of each page, clipping out UI elements
-5. **OCR Processing**: Runs OCR on screenshots using your chosen provider
-6. **Export**: Generates your chosen format(s) with proper formatting and metadata
-
-## OCR Optimization
-
-The tool automatically optimizes the Kindle Cloud Reader for better OCR accuracy:
-
-- ✅ **Single-column layout** (eliminates multi-column confusion)
-- ✅ **Widened canvas** (90-95% of viewport width)
-- ✅ **Automatic zoom** (1.0-1.08x based on viewport)
-- ✅ **Canvas clipping** (excludes UI elements from screenshots)
-- ✅ **Smart page detection** (waits for content to load)
-
-These optimizations significantly improve OCR accuracy, especially with complex layouts.
+3. **Screenshot Capture**: Takes screenshots of each page, clipping out UI elements
+4. **OCR Processing**: Runs OCR on screenshots using your chosen provider
+5. **Export**: Generates your chosen format(s) with proper formatting and metadata
 
 ## Examples
 
