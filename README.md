@@ -472,10 +472,6 @@ MIT © Jason Richardson
 
 ## Acknowledgments
 
-This project builds upon and merges ideas from:
-- [kindle-ai-export](https://github.com/transitive-bullshit/kindle-ai-export) by Travis Fischer
-- [kindle_exporter_tool](https://github.com/jrichyrich/kindle_exporter_tool) (private repo)
-
 Special thanks to:
 - The Playwright team for excellent browser automation
 - The Tesseract OCR project

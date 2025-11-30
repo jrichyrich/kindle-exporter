@@ -187,11 +187,6 @@ This was the first public release of Kindle Exporter, representing the successfu
 - ✅ Documentation written
 - ✅ Ready for extended testing
 
-**Credits:**
-This project builds upon ideas from:
-- [kindle-ai-export](https://github.com/transitive-bullshit/kindle-ai-export) by Travis Fischer
-- [kindle_exporter_tool](https://github.com/jrichyrich/kindle_exporter_tool) (private)
-
 ---
 
 [Unreleased]: https://github.com/yourusername/kindle-exporter/compare/v0.1.0-alpha...HEAD
