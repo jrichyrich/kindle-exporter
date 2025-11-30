@@ -8,6 +8,7 @@ import type { Exporter, ExportOptions, ExportResult } from './types.js'
 import { ExporterNotAvailableError } from './types.js'
 import { TextExporter } from './text.js'
 import { PdfExporter } from './pdf.js'
+import { SearchablePdfExporter } from './searchablePdf.js'
 import { MarkdownExporter } from './markdown.js'
 import { EpubExporter } from './epub.js'
 
@@ -22,8 +23,10 @@ export function createExporter(format: ExportFormat): Exporter {
       return new TextExporter()
 
     case 'pdf':
-    case 'pdf-ocr':
       return new PdfExporter()
+
+    case 'pdf-ocr':
+      return new SearchablePdfExporter()
 
     case 'markdown':
       return new MarkdownExporter()
@@ -47,7 +50,7 @@ export function createExporter(format: ExportFormat): Exporter {
  * @returns List of available format names
  */
 export async function getAvailableExporters(): Promise<ExportFormat[]> {
-  const formats: ExportFormat[] = ['text', 'pdf', 'markdown']
+  const formats: ExportFormat[] = ['text', 'pdf', 'pdf-ocr', 'markdown']
 
   // Check if EPUB (Calibre) is available
   const epubExporter = new EpubExporter()
@@ -184,5 +187,6 @@ export {
 
 export { TextExporter } from './text.js'
 export { PdfExporter } from './pdf.js'
+export { SearchablePdfExporter } from './searchablePdf.js'
 export { MarkdownExporter } from './markdown.js'
 export { EpubExporter } from './epub.js'

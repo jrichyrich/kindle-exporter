@@ -12,6 +12,7 @@ import { randomBytes } from 'crypto'
 import { unlink } from 'fs/promises'
 import type { OcrProvider, OcrProviderConfig } from './types.js'
 import { OcrProcessingError, ProviderNotAvailableError } from './types.js'
+import type { WordPosition } from '../types.js'
 
 const execFileAsync = promisify(execFile)
 
@@ -187,5 +188,133 @@ export class TesseractProvider implements OcrProvider {
     } catch {
       return ['eng'] // Default to English if we can't list
     }
+  }
+
+  /**
+   * Perform OCR with word-level position data (hOCR format)
+   * Returns both plain text and word positions for searchable PDFs
+   */
+  async ocrWithPositions(
+    imagePath: string,
+    options?: { lang?: string }
+  ): Promise<{ text: string; wordPositions: WordPosition[] }> {
+    const tesseract = await this.findTesseract()
+
+    if (!existsSync(imagePath)) {
+      throw new OcrProcessingError(
+        'tesseract',
+        imagePath,
+        new Error(`Image file not found: ${imagePath}`)
+      )
+    }
+
+    // Create temporary output file
+    const tmpFile = join(
+      tmpdir(),
+      `tesseract-hocr-${randomBytes(8).toString('hex')}`
+    )
+
+    try {
+      const lang = options?.lang || this.lang
+
+      // Tesseract args for hOCR output
+      const args = [
+        imagePath,
+        tmpFile,
+        '-l',
+        lang,
+        '--psm',
+        '3', // Fully automatic page segmentation
+        '--oem',
+        '3', // Default OCR Engine Mode
+        'hocr' // Output hOCR format
+      ]
+
+      await execFileAsync(tesseract, args, {
+        maxBuffer: 10 * 1024 * 1024 // 10MB buffer
+      })
+
+      // Read the hOCR output file
+      const outputPath = `${tmpFile}.hocr`
+      if (!existsSync(outputPath)) {
+        throw new Error('Tesseract did not create hOCR output file')
+      }
+
+      const { readFile } = await import('fs/promises')
+      const hocrXml = await readFile(outputPath, 'utf-8')
+
+      // Parse hOCR to extract word positions
+      const wordPositions = this.parseHocr(hocrXml)
+
+      // Extract plain text from word positions
+      const text = wordPositions.map((w) => w.text).join(' ')
+
+      // Clean up temp file
+      await unlink(outputPath).catch(() => {
+        /* ignore cleanup errors */
+      })
+
+      return { text: text.trim(), wordPositions }
+    } catch (error) {
+      // Clean up on error
+      try {
+        await unlink(`${tmpFile}.hocr`)
+      } catch {
+        /* ignore */
+      }
+
+      throw new OcrProcessingError(
+        'tesseract',
+        imagePath,
+        error instanceof Error ? error : new Error(String(error))
+      )
+    }
+  }
+
+  /**
+   * Parse hOCR XML to extract word positions
+   */
+  private parseHocr(hocrXml: string): WordPosition[] {
+    const wordPositions: WordPosition[] = []
+
+    // Match all ocrx_word spans
+    // Format: <span class='ocrx_word' id='word_1_1' title='bbox 54 10 129 29; x_wconf 96'>Courage</span>
+    const wordRegex =
+      /<span class=['"]ocrx_word['"][^>]*title=['"]([^'"]*?)['"][^>]*>([^<]*)<\/span>/g
+
+    let match
+    while ((match = wordRegex.exec(hocrXml)) !== null) {
+      const titleAttr = match[1]
+      const text = match[2]?.trim()
+
+      if (!titleAttr || !text) continue
+
+      // Parse bbox from title attribute
+      // Format: "bbox 54 10 129 29; x_wconf 96"
+      const bboxMatch = /bbox (\d+) (\d+) (\d+) (\d+)/.exec(titleAttr)
+      const confMatch = /x_wconf (\d+)/.exec(titleAttr)
+
+      if (
+        bboxMatch &&
+        bboxMatch[1] &&
+        bboxMatch[2] &&
+        bboxMatch[3] &&
+        bboxMatch[4]
+      ) {
+        wordPositions.push({
+          text,
+          bbox: {
+            x0: parseInt(bboxMatch[1]),
+            y0: parseInt(bboxMatch[2]),
+            x1: parseInt(bboxMatch[3]),
+            y1: parseInt(bboxMatch[4])
+          },
+          confidence:
+            confMatch && confMatch[1] ? parseInt(confMatch[1]) : undefined
+        })
+      }
+    }
+
+    return wordPositions
   }
 }

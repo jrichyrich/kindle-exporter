@@ -127,11 +127,23 @@ export interface PageChunk {
   screenshot: string
 }
 
+export interface WordPosition {
+  text: string
+  bbox: {
+    x0: number
+    y0: number
+    x1: number
+    y1: number
+  }
+  confidence?: number
+}
+
 export interface ContentChunk {
   index: number
   page: number
   text: string
   screenshot: string
+  wordPositions?: WordPosition[] // For positioned searchable PDFs
 }
 
 export interface AmazonRenderLocationMap {
