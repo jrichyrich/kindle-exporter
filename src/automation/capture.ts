@@ -5,8 +5,30 @@
 
 import { mkdir } from 'fs/promises'
 import { join } from 'path'
-import type { Page } from 'playwright'
+import type { Page, Frame } from 'playwright'
 import type { PageChunk } from '../types.js'
+
+/**
+ * Selectors to locate the reading canvas/content area
+ * Tries multiple patterns for compatibility with different KCR versions
+ */
+const READING_CANVAS_SELECTORS = [
+  '.kg-view canvas',
+  '.kg-view img',
+  '[data-testid="kindle-reader-page"] canvas',
+  '[data-testid="kindle-reader-page"]',
+  '.kindleReader_page canvas',
+  '#kindleReader_book_image'
+]
+
+/**
+ * Selectors for reader iframes (some versions use iframes)
+ */
+const READER_IFRAME_SELECTORS = [
+  '#KindleReaderIFrame',
+  'iframe[id*="KindleReader"]',
+  'iframe[title*="Kindle"]'
+]
 
 /**
  * Screenshot options
@@ -51,13 +73,16 @@ export async function capturePage(
   )
 
   try {
-    // Take screenshot of the full viewport
-    // Kindle Cloud Reader displays the book content in the main viewport
+    // Try to find the reading canvas to clip out UI elements
+    const clip = await determineReadingClip(page)
+
+    // Take screenshot of either the clipped canvas or full viewport as fallback
     await page.screenshot({
       path: screenshotPath,
       type: extension,
       quality: extension === 'jpeg' ? options.quality || 90 : undefined,
-      fullPage: false // Just capture viewport, not full scrollable page
+      fullPage: !clip, // Use fullPage if no clip found
+      clip: clip || undefined
     })
 
     return {
@@ -69,6 +94,73 @@ export async function capturePage(
     console.error(`Failed to capture page ${pageNumber}:`, error)
     throw error
   }
+}
+
+/**
+ * Determine the clip area for the reading canvas
+ * Tries to find the book content area to exclude UI elements
+ */
+async function determineReadingClip(
+  page: Page
+): Promise<{ x: number; y: number; width: number; height: number } | null> {
+  // First try to locate clip from main page
+  const clip = await locateClipFromRoot(page)
+  if (clip) return clip
+
+  // If not found, check inside iframes
+  for (const iframeSelector of READER_IFRAME_SELECTORS) {
+    try {
+      const iframeLocator = page.locator(iframeSelector).first()
+      const iframeHandle = await iframeLocator
+        .elementHandle({ timeout: 1500 })
+        .catch(() => null)
+
+      if (!iframeHandle) continue
+
+      const frame = await iframeHandle.contentFrame()
+      if (!frame) continue
+
+      const frameClip = await locateClipFromRoot(frame)
+      if (frameClip) return frameClip
+    } catch {
+      // Continue to next iframe selector
+      continue
+    }
+  }
+
+  // No clip found - will fall back to full viewport
+  return null
+}
+
+/**
+ * Locate clip area from a page or frame
+ */
+async function locateClipFromRoot(
+  root: Page | Frame
+): Promise<{ x: number; y: number; width: number; height: number } | null> {
+  for (const selector of READING_CANVAS_SELECTORS) {
+    try {
+      const locator = root.locator(selector)
+      const count = await locator.count()
+
+      if (count === 0) continue
+
+      const boundingBox = await locator.first().boundingBox()
+      if (boundingBox) {
+        return {
+          x: Math.max(boundingBox.x, 0),
+          y: Math.max(boundingBox.y, 0),
+          width: boundingBox.width,
+          height: boundingBox.height
+        }
+      }
+    } catch {
+      // Continue to next selector
+      continue
+    }
+  }
+
+  return null
 }
 
 /**
