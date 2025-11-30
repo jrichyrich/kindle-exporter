@@ -88,23 +88,31 @@ export async function navigateToKindle(
   page: Page,
   asin?: string
 ): Promise<void> {
+  // Use the correct URL format to directly open the book in the reader
   const url = asin
-    ? `https://read.amazon.com/kindle-library?asin=${asin}`
+    ? `https://read.amazon.com/?asin=${asin}&ref_=kcr_app_sdr_core`
     : 'https://read.amazon.com/kindle-library'
 
   await page.goto(url, {
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded', // Don't wait for networkidle since Kindle Cloud Reader keeps making requests
     timeout: 60000
   })
+
+  // Give the page a moment to start loading
+  await page.waitForTimeout(2000)
 
   // Wait for the reader to be ready
   try {
     await page.waitForSelector('#kindleReader_book_image', {
-      timeout: 10000
+      timeout: 15000
     })
   } catch {
-    // Reader might already be open or selector might differ
-    // This is okay, we'll handle it in navigation
+    // Reader might use a different structure, check for read button
+    const hasReadNow = await page.$('[data-testid="read-now"]')
+    if (hasReadNow) {
+      await hasReadNow.click()
+      await page.waitForTimeout(3000)
+    }
   }
 }
 
@@ -117,23 +125,23 @@ export async function waitForPageReady(
   page: Page,
   timeout: number = 5000
 ): Promise<void> {
-  // Wait for the main content area
-  await page.waitForSelector('#kindleReader_book_image', { timeout })
+  // Wait for page content to be present - just check that body has text
+  try {
+    await page.waitForFunction(
+      () => {
+        // @ts-expect-error - This runs in browser context where document is available
+        const bodyText = document.body.innerText || ''
+        // Consider page ready if there's substantial text content
+        return bodyText.length > 100
+      },
+      { timeout }
+    )
+  } catch {
+    // If timeout, just continue - page might already be ready
+  }
 
-  // Wait for any loading indicators to disappear
-  await page.waitForFunction(
-    () => {
-      // @ts-expect-error - This runs in browser context where document is available
-      const loadingElements = document.querySelectorAll(
-        '[class*="loading"], [class*="spinner"]'
-      )
-      return loadingElements.length === 0
-    },
-    { timeout }
-  )
-
-  // Small additional delay for stability
-  await page.waitForTimeout(500)
+  // Additional delay for stability
+  await page.waitForTimeout(1000)
 }
 
 /**

@@ -116,17 +116,23 @@ export async function orchestrateBookExport(
     })
     spinner.succeed('Browser launched')
 
-    // Step 2: Navigate to Kindle Cloud Reader
-    spinner.start('Navigating to Kindle Cloud Reader...')
-    await navigateToKindle(session.page, options.asin)
-    spinner.succeed('Kindle Cloud Reader loaded')
+    // Step 2 & 3: Extract metadata (sets up interceptors) then navigate
+    spinner.start(
+      'Navigating to Kindle Cloud Reader and extracting metadata...'
+    )
 
-    // Step 3: Extract metadata
-    spinner.start('Extracting book metadata...')
-    metadata = await extractBookMetadata(
+    // Start metadata extraction (which sets up network interceptors)
+    const metadataPromise = extractBookMetadata(
       session.page,
       options.asin || 'unknown'
     )
+
+    // Navigate to Kindle (this will trigger the metadata capture)
+    await navigateToKindle(session.page, options.asin)
+
+    // Wait for metadata extraction to complete
+    metadata = await metadataPromise
+
     const bookTitle = options.bookTitle || metadata.meta.title
     spinner.succeed(`Book: ${chalk.cyan(bookTitle)}`)
 
@@ -159,7 +165,12 @@ export async function orchestrateBookExport(
     spinner.succeed(`Captured ${chalk.green(pages.length)} pages`)
 
     // Save metadata with pages
-    await saveMetadata(metadata, options.outputDir)
+    const sanitizedTitle = bookTitle
+      .replace(/[<>:"/\\|?*]/g, '-')
+      .replace(/\s+/g, '_')
+      .slice(0, 200)
+    const metadataPath = `${options.outputDir}/${sanitizedTitle}/metadata.json`
+    await saveMetadata(metadata, metadataPath)
 
     // Step 6: Export to requested formats
     if (!options.dryRun && options.formats.length > 0) {

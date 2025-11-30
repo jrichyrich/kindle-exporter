@@ -50,23 +50,14 @@ export async function capturePage(
     `page_${paddedPageNum}.${extension}`
   )
 
-  // Find the main content area
-  const contentSelector = '#kindleReader_book_image'
-
   try {
-    // Wait for content to be visible
-    await page.waitForSelector(contentSelector, { timeout: 5000 })
-
-    // Take screenshot of the content area
-    const element = await page.$(contentSelector)
-    if (!element) {
-      throw new Error('Could not find content element')
-    }
-
-    await element.screenshot({
+    // Take screenshot of the full viewport
+    // Kindle Cloud Reader displays the book content in the main viewport
+    await page.screenshot({
       path: screenshotPath,
       type: extension,
-      quality: extension === 'jpeg' ? options.quality || 90 : undefined
+      quality: extension === 'jpeg' ? options.quality || 90 : undefined,
+      fullPage: false // Just capture viewport, not full scrollable page
     })
 
     return {

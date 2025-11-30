@@ -44,7 +44,7 @@ export async function extractBookMetadata(
   // The interceptors will capture the data during page load
 
   // Wait for all metadata to be captured (with timeout)
-  await waitForMetadata(capturedData, 30000)
+  await waitForMetadata(capturedData, 45000)
 
   // Validate we have the minimum required data
   if (!capturedData.metadata || !capturedData.bookInfo) {
@@ -98,9 +98,8 @@ async function setupNetworkInterceptors(
       // Capture book info (startReading response)
       if (url.includes('startReading') || url.includes('getBookInfo')) {
         const json = await response.json()
-        if (json.data) {
-          capturedData.bookInfo = json.data
-        }
+        // Use data field if present, otherwise use whole response
+        capturedData.bookInfo = json.data || json
       }
 
       // Capture location map (render TAR files)
@@ -127,11 +126,14 @@ async function setupNetworkInterceptors(
 
 /**
  * Parse JSONP metadata response
- * Format: YJ_metadata(...json...)
+ * Format: YJ_metadata(...json...) or loadMetadata(...json...)
  */
 function parseMetadataJsonp(jsonp: string): AmazonBookMeta {
-  // Remove JSONP wrapper: YJ_metadata(...) -> ...
-  const match = jsonp.match(/YJ[._]metadata\s*\(\s*({.*})\s*\)/)
+  // Remove JSONP wrapper - try multiple patterns
+  let match = jsonp.match(/YJ[._]metadata\s*\(\s*({.*})\s*\)/)
+  if (!match) {
+    match = jsonp.match(/loadMetadata\s*\(\s*({.*})\s*\)/)
+  }
   if (!match || !match[1]) {
     throw new Error('Invalid metadata JSONP format')
   }
@@ -160,7 +162,15 @@ async function waitForMetadata(
     await new Promise((resolve) => setTimeout(resolve, 100))
   }
 
-  throw new Error('Timeout waiting for metadata')
+  // Provide helpful error message based on what's missing
+  const missing: string[] = []
+  if (!capturedData.metadata) missing.push('metadata (YJmetadata.jsonp)')
+  if (!capturedData.bookInfo) missing.push('book info (startReading)')
+
+  throw new Error(
+    `Timeout waiting for metadata. Missing: ${missing.join(', ')}. ` +
+      'Please ensure you are logged into Amazon and the book is in your Kindle library.'
+  )
 }
 
 /**
