@@ -289,10 +289,11 @@ async function captureAndOcrPages(
     // Get current page number
     const currentPage = (await getCurrentPageNumber(session.page)) || pageNumber
 
-    // Capture screenshot
+    // Capture screenshot (use CLI bookTitle if provided, otherwise metadata title)
+    const bookTitle = options.bookTitle || metadata.meta.title
     const pageChunk = await capturePage(session.page, currentPage, {
       outputDir: options.outputDir,
-      bookTitle: metadata.meta.title,
+      bookTitle,
       quality: 90,
       format: 'png'
     })
