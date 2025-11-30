@@ -2,7 +2,7 @@
 
 **Version**: 0.1.0-pre-alpha
 **Last Updated**: 2025-11-29
-**Phase**: OCR Provider Integration - Complete! (Phase 3 of 10)
+**Phase**: Metadata Extraction - Complete! (Phase 4 of 10)
 
 ## Overview
 
@@ -35,15 +35,23 @@ This project is merging two existing Kindle export tools into a unified, feature
 - [x] Implement batch OCR orchestration
 - [x] All OCR code builds successfully
 
-### In Progress 🔄
-- [ ] Begin Phase 4: Metadata Extraction
+### Completed (Phase 4) ✅
+- [x] Port metadata extraction from public repo
+- [x] Implement network interception for metadata capture
+- [x] Extract Amazon metadata (YJmetadata.jsonp)
+- [x] Parse TOC with depth and page mapping
+- [x] Implement location/position utilities
+- [x] Implement parser utilities (TOC formatting, progress tracking)
+- [x] Metadata module builds successfully
 
-### Upcoming (Phase 4) 📋
-- [ ] Port metadata extraction from public repo
-- [ ] Extract Amazon metadata (YJmetadata.jsonp)
-- [ ] Parse TOC with page mapping
-- [ ] Extract location map
-- [ ] Integrate metadata with export workflow
+### In Progress 🔄
+- [ ] Begin Phase 5: Export Format Extensions
+
+### Upcoming (Phase 5) 📋
+- [ ] Implement PDF export with TOC
+- [ ] Implement Markdown export
+- [ ] Implement EPUB export (Calibre wrapper)
+- [ ] Integrate export formats with workflow
 
 ## Milestone Tracker
 
@@ -51,7 +59,7 @@ This project is merging two existing Kindle export tools into a unified, feature
 |-----------|--------|--------|----------|
 | M1: Foundation Complete | Day 5 | ✅ Complete | 100% |
 | M2: OCR Providers Integrated | Day 10 | ✅ Complete | 100% |
-| M3: Metadata Extraction Working | Day 14 | ⏳ Pending | 0% |
+| M3: Metadata Extraction Working | Day 14 | ✅ Complete | 100% |
 | M4: All Export Formats | Day 21 | ⏳ Pending | 0% |
 | M5: Feature Complete | Day 28 | ⏳ Pending | 0% |
 | M6: Beta Release | Day 35 | ⏳ Pending | 0% |
@@ -98,7 +106,7 @@ This project is merging two existing Kindle export tools into a unified, feature
 | **Core Features** |
 | Browser Automation | ⏳ Planned | P1 | Both repos |
 | Resume Capability | ⏳ Planned | P1 | From private repo |
-| Metadata Extraction | ⏳ Planned | P1 | From public repo |
+| Metadata Extraction | ✅ Complete | P1 | From public repo |
 | Batch Processing | ⏳ Planned | P1 | From private repo |
 | Repair Tool | ⏳ Planned | P2 | From private repo |
 | **UX Features** |
@@ -127,10 +135,15 @@ Legend:
    - ✅ Implement OpenAI Vision provider
    - ✅ Implement Local Vision Model provider (Qwen2-VL, LLaMA, Pixtral)
    - ✅ Implement batch OCR orchestration
-5. 🔄 Begin Phase 4: Metadata Extraction
-   - Port metadata extraction logic from public repo
-   - Extract Amazon book metadata and TOC
-   - Map locations to pages
+5. ✅ Metadata extraction complete (Phase 4)
+   - ✅ Port metadata extraction logic from public repo
+   - ✅ Extract Amazon book metadata and TOC
+   - ✅ Map locations to pages
+   - ✅ Implement parser utilities
+6. 🔄 Begin Phase 5: Export Format Extensions
+   - Implement PDF export with TOC navigation
+   - Implement Markdown export with chapters
+   - Implement EPUB conversion
 
 ## Known Issues
 
