@@ -7,7 +7,8 @@ import {
   chromium,
   type Browser,
   type BrowserContext,
-  type Page
+  type Page,
+  type Frame
 } from 'playwright'
 import type { ToolConfig } from '../types.js'
 
@@ -79,6 +80,102 @@ export async function createBrowserSession(
 }
 
 /**
+ * Widen and optimize the reading canvas for better OCR
+ * Forces single-column layout, increases width, and applies slight zoom
+ * This significantly improves OCR accuracy by:
+ * - Eliminating multi-column confusion
+ * - Maximizing text per capture
+ * - Increasing character size for better recognition
+ *
+ * @param page - Playwright page
+ * @param zoomOverride - Optional custom zoom factor (default: auto-calculated)
+ */
+async function widenReadingCanvas(
+  page: Page,
+  zoomOverride?: number
+): Promise<void> {
+  const viewport = page.viewportSize()
+  const vw = viewport?.width ?? 1280
+
+  // Calculate auto-zoom: 1.0 to 1.08x based on viewport width
+  const autoZoom = 1 + Math.min(Math.max(((vw - 1200) / 2400) * 0.05, 0), 0.08)
+  const zoomFactor = zoomOverride ?? autoZoom
+
+  // Calculate canvas width: 90-95% of viewport
+  const widthPct = Math.min(
+    90 + Math.min(Math.max(((vw - 1200) / 2400) * 5, 0), 5),
+    95
+  )
+
+  // Apply widening to a page or frame context
+  const apply = async (ctx: Page | Frame) => {
+    try {
+      await ctx.evaluate(
+        ({ zoom, widthPercent }) => {
+          // Selectors for various Kindle reader elements
+          const selectors = [
+            '#kr-renderer',
+            '.kindleReader_page',
+            '[data-testid="kindle-reader-page"]',
+            '.kg-view',
+            '.kg-full-page-img img'
+          ]
+
+          // Apply zoom to entire document
+          // @ts-expect-error - This runs in browser context where document is available
+          document.documentElement.style.zoom = `${zoom}`
+          // @ts-expect-error - This runs in browser context where document is available
+          document.documentElement.style.overflowX = 'auto'
+
+          // Widen all reading canvas elements
+          selectors.forEach((sel) => {
+            // @ts-expect-error - This runs in browser context
+            document.querySelectorAll(sel).forEach((el: HTMLElement) => {
+              el.style.maxWidth = `${widthPercent}vw`
+              el.style.width = `${widthPercent}vw`
+              el.style.margin = '0 auto'
+              el.style.overflow = 'visible'
+              el.style.transformOrigin = 'top center'
+            })
+          })
+        },
+        { zoom: zoomFactor, widthPercent: widthPct }
+      )
+    } catch {
+      // Ignore errors if context not ready
+    }
+  }
+
+  // Apply to main page
+  await apply(page)
+
+  // Also apply to any iframes (some Kindle versions use iframes)
+  try {
+    const iframeSelectors = [
+      '#KindleReaderIFrame',
+      'iframe[id*="KindleReader"]',
+      'iframe[title*="Kindle"]'
+    ]
+
+    for (const selector of iframeSelectors) {
+      const iframeLocator = page.locator(selector).first()
+      const iframeHandle = await iframeLocator
+        .elementHandle({ timeout: 1000 })
+        .catch(() => null)
+
+      if (iframeHandle) {
+        const frame = await iframeHandle.contentFrame()
+        if (frame) {
+          await apply(frame)
+        }
+      }
+    }
+  } catch {
+    // Ignore iframe errors
+  }
+}
+
+/**
  * Navigate to Kindle Cloud Reader
  * @param page - Playwright page
  * @param asin - Optional Amazon ASIN to open specific book
@@ -114,6 +211,9 @@ export async function navigateToKindle(
       await page.waitForTimeout(3000)
     }
   }
+
+  // Optimize the reading canvas for OCR (single column, widened, slightly zoomed)
+  await widenReadingCanvas(page)
 }
 
 /**

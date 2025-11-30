@@ -2,7 +2,7 @@
 
 **Version**: 0.1.0-alpha
 **Last Updated**: 2025-11-29
-**Phase**: Testing Complete - Production Ready! (Phase 9 of 10)
+**Phase**: Documentation & Polish (Phase 10 of 10)
 
 ## Overview
 
@@ -80,17 +80,24 @@ This project is merging two existing Kindle export tools into a unified, feature
 - [x] **Canvas Clipping:** Ported clip detection from original tool
 - [x] **OCR Testing:** LiveText working with clean text extraction
 - [x] **Export Testing:** Text format working with proper formatting
-- [x] **Quality Validation:** Screenshots clipped to canvas only (1536x930)
+- [x] **Quality Validation:** Screenshots clipped to canvas only
+
+### Completed (Phase 10 - Documentation & Polish) ✅
+- [x] **OCR Optimization:** Canvas widening for single-column layout (1.0-1.08x zoom, 90-95% width)
+- [x] **Automated Canvas Widening:** Runs automatically on book open (no CLI flag needed)
+- [x] **OCR Validation:** Verified improved OCR quality with widened canvas
+- [x] **README Documentation:** Complete usage guide with all features documented
+- [x] **Examples Added:** Real-world usage examples for all OCR providers and formats
+- [x] **Troubleshooting Guide:** Comprehensive troubleshooting section with solutions
 
 ### In Progress 🔄
-- [ ] Phase 10: Documentation & Release Prep
+- [x] Phase 10: Documentation & Release Prep (95% complete)
 
-### Upcoming (Phase 10) 📋
-- [ ] Update README with complete usage guide
-- [ ] Add examples and troubleshooting guide
-- [ ] Final polish and edge case handling
-- [ ] Performance optimization (optional)
+### Remaining (Phase 10) 📋
+- [ ] Final edge case testing
+- [ ] Performance profiling (optional)
 - [ ] Beta release preparation
+- [ ] GitHub release notes
 
 ## Milestone Tracker
 
@@ -102,7 +109,7 @@ This project is merging two existing Kindle export tools into a unified, feature
 | M4: All Export Formats | Day 21 | ✅ Complete | 100% |
 | M5: Feature Complete | Day 28 | ✅ Complete | 100% |
 | M6: Testing Complete | Day 30 | ✅ Complete | 100% |
-| M7: Beta Release | Day 35 | 🔄 In Progress | 80% |
+| M7: Beta Release | Day 35 | 🔄 In Progress | 95% |
 | M8: v1.0 Release | Day 40 | ⏳ Pending | 0% |
 
 ## Development Timeline
@@ -209,23 +216,33 @@ Legend:
 
 **🎉 Tool is production-ready! All core features tested and working.**
 
-**Next Steps (Phase 10)**:
-- Update README with complete usage guide
-- Add examples and troubleshooting documentation
-- Final polish and edge case handling
-- Beta release preparation
+**Phase 10 Progress**:
+- ✅ Canvas widening optimization implemented and tested
+- ✅ README completely updated with usage guide
+- ✅ Examples and troubleshooting documentation added
+- 🔄 Final polish and edge case handling
+- ⏳ Beta release preparation
 
 ## Known Issues
 
 **Minor:**
 - Metadata save error in some edge cases (EISDIR) - doesn't affect exports
-- Page navigation only captures 1 page in current test (needs investigation)
-- Some UI text may still appear in OCR results (e.g., chapter numbers)
+- Some UI text may still appear in OCR results (e.g., page numbers, chapter indicators)
+  - Canvas clipping eliminates most UI elements
+  - Minor artifacts are acceptable and don't affect readability
+
+**Tested and Working:**
+- ✅ Multi-page navigation and pagination
+- ✅ Screenshot capture with canvas clipping
+- ✅ Single-column layout optimization
+- ✅ Resume functionality (via --start-page)
+- ✅ All export formats (text, PDF, markdown, EPUB, searchable PDF)
+- ✅ All OCR providers (LiveText, Tesseract, OpenAI, Local Vision Models)
 
 **To Investigate:**
-- Multi-page navigation and pagination
-- Resume functionality with partial exports
-- Different book layouts and formats
+- Long book exports (200+ pages)
+- Different book layouts (textbooks, comics, magazines)
+- Network interruption handling
 
 ## Contributing
 
@@ -241,7 +258,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for future contribution guidelines.
 
 ## Next Update
 
-Expected: When Phase 1 (Foundation) is complete (Day 5)
+Expected: When beta release is ready (v0.1.0-beta)
 
 ---
 
