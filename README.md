@@ -94,6 +94,14 @@ node dist/cli.js \
   --format text \
   --ocr livetext \
   --headful
+
+# Manual setup mode - position window before capturing
+node dist/cli.js \
+  --asin B0DYJFQQPX \
+  --book-title "My Book" \
+  --format pdf-ocr \
+  --ocr tesseract \
+  --manual-setup
 ```
 
 ## Finding Your Book's ASIN
@@ -124,6 +132,10 @@ The ASIN is Amazon's unique book identifier. To find it:
 - `--max-pages <number>` - Maximum pages to capture (for testing)
 - `--start-page <number>` - Starting page number (default: 1)
 - `--headful` - Show browser window (useful for debugging)
+- `--manual-setup` - Wait for user to manually position book before capturing
+  - Opens browser, shows the book, and waits for you to press Enter
+  - Useful for custom window sizing, positioning, and full-screen mode
+  - Automatically enables headful mode
 - `--profile-path <path>` - Chrome profile path with Kindle login
 - `--delay-min <ms>` - Minimum delay between pages (default: 2000ms)
 - `--delay-max <ms>` - Maximum delay between pages (default: 4000ms)

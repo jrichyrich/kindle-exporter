@@ -69,6 +69,11 @@ program
   .option('--chrome-binary <path>', 'Chrome executable path')
 
   .option('--headful', 'Show browser window', false)
+  .option(
+    '--manual-setup',
+    'Wait for user to manually position book before capturing',
+    false
+  )
   .option('--dry-run', 'Skip screenshot/OCR, test navigation only', false)
   .option('--max-pages <count>', 'Limit export to first N pages', parseInt)
   .option('--resume-from <page>', 'Resume from specific page number', parseInt)
@@ -153,6 +158,7 @@ async function main() {
     formats,
     outputDir: options.output || './exports',
     headful: options.headful || false,
+    manualSetup: options.manualSetup || false,
     dryRun: options.dryRun || false,
     maxPages: options.maxPages,
     resume: options.resumeFrom !== undefined,

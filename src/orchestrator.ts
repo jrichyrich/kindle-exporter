@@ -7,6 +7,7 @@ import ora from 'ora'
 import chalk from 'chalk'
 import { loadConfig } from './config.js'
 import type { ToolConfig, ExportFormat, ContentChunk } from './types.js'
+import { waitForEnter } from './utils/prompt.js'
 
 // Automation
 import {
@@ -56,6 +57,8 @@ export interface OrchestratorOptions {
   outputDir: string
   /** Show browser window */
   headful?: boolean
+  /** Manual setup mode - wait for user to position book */
+  manualSetup?: boolean
   /** Dry run (no OCR/export) */
   dryRun?: boolean
   /** Maximum pages to capture */
@@ -109,10 +112,12 @@ export async function orchestrateBookExport(
 
     // Step 1: Create browser session
     spinner.text = 'Launching browser...'
+    // Force headful mode if manual setup is enabled
+    const isHeadful = options.headful || options.manualSetup || false
     session = await createBrowserSession({
       profilePath: config.chromeProfilePath,
       executablePath: config.chromeExecutablePath,
-      headful: options.headful || false
+      headful: isHeadful
     })
     spinner.succeed('Browser launched')
 
@@ -135,6 +140,26 @@ export async function orchestrateBookExport(
 
     const bookTitle = options.bookTitle || metadata.meta.title
     spinner.succeed(`Book: ${chalk.cyan(bookTitle)}`)
+
+    // Manual setup mode - wait for user to position book
+    if (options.manualSetup) {
+      spinner.info(
+        chalk.yellow('Manual setup mode: The browser is now showing your book.')
+      )
+      spinner.info(
+        chalk.yellow(
+          'Position the window, resize as needed, and navigate to your starting page.'
+        )
+      )
+      spinner.stop()
+
+      await waitForEnter(
+        '\nPress Enter when the book is positioned and ready to capture...'
+      )
+
+      spinner.start('Ready to capture')
+      spinner.succeed('Starting capture')
+    }
 
     // Step 4: Initialize or load run state
     const existingState = await loadRunState(options.outputDir, bookTitle)
