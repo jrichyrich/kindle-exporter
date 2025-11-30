@@ -2,7 +2,7 @@
 
 **Version**: 0.1.0-pre-alpha
 **Last Updated**: 2025-11-29
-**Phase**: Metadata Extraction - Complete! (Phase 4 of 10)
+**Phase**: Export Format Extensions - Complete! (Phase 5 of 10)
 
 ## Overview
 
@@ -44,14 +44,25 @@ This project is merging two existing Kindle export tools into a unified, feature
 - [x] Implement parser utilities (TOC formatting, progress tracking)
 - [x] Metadata module builds successfully
 
-### In Progress 🔄
-- [ ] Begin Phase 5: Export Format Extensions
+### Completed (Phase 5) ✅
+- [x] Implement base exporter types and interfaces
+- [x] Implement plain text exporter
+- [x] Implement PDF exporter with TOC bookmarks
+- [x] Implement searchable PDF with text layer option
+- [x] Implement Markdown exporter with front matter
+- [x] Implement EPUB exporter (Calibre wrapper)
+- [x] Create exporter factory with multi-format support
+- [x] All exporters build successfully
 
-### Upcoming (Phase 5) 📋
-- [ ] Implement PDF export with TOC
-- [ ] Implement Markdown export
-- [ ] Implement EPUB export (Calibre wrapper)
-- [ ] Integrate export formats with workflow
+### In Progress 🔄
+- [ ] Begin Phase 6: Browser Automation
+
+### Upcoming (Phase 6-7) 📋
+- [ ] Implement browser automation for Kindle Cloud Reader
+- [ ] Screenshot capture with Playwright
+- [ ] Navigation and pagination
+- [ ] Resume capability
+- [ ] Integrate with OCR and export pipeline
 
 ## Milestone Tracker
 
@@ -60,7 +71,7 @@ This project is merging two existing Kindle export tools into a unified, feature
 | M1: Foundation Complete | Day 5 | ✅ Complete | 100% |
 | M2: OCR Providers Integrated | Day 10 | ✅ Complete | 100% |
 | M3: Metadata Extraction Working | Day 14 | ✅ Complete | 100% |
-| M4: All Export Formats | Day 21 | ⏳ Pending | 0% |
+| M4: All Export Formats | Day 21 | ✅ Complete | 100% |
 | M5: Feature Complete | Day 28 | ⏳ Pending | 0% |
 | M6: Beta Release | Day 35 | ⏳ Pending | 0% |
 | M7: v1.0 Release | Day 40 | ⏳ Pending | 0% |
@@ -97,11 +108,11 @@ This project is merging two existing Kindle export tools into a unified, feature
 | OpenAI Vision | ✅ Complete | P1 | From public repo |
 | Local Vision Models | ✅ Foundation | P2 | NEW: Qwen, LLaMA, Pixtral |
 | **Export Formats** |
-| Plain Text | ⏳ Planned | P1 | Both repos |
-| PDF with TOC | ⏳ Planned | P1 | From public repo |
-| Searchable PDF | ⏳ Planned | P2 | From private repo |
-| Markdown | ⏳ Planned | P2 | From public repo |
-| EPUB | ⏳ Planned | P2 | From public repo |
+| Plain Text | ✅ Complete | P1 | Both repos |
+| PDF with TOC | ✅ Complete | P1 | From public repo |
+| Searchable PDF | ✅ Complete | P2 | From private repo |
+| Markdown | ✅ Complete | P2 | From public repo |
+| EPUB | ✅ Complete | P2 | From public repo |
 | Audiobook | ⏳ Planned | P3 | From public repo |
 | **Core Features** |
 | Browser Automation | ⏳ Planned | P1 | Both repos |
@@ -140,10 +151,17 @@ Legend:
    - ✅ Extract Amazon book metadata and TOC
    - ✅ Map locations to pages
    - ✅ Implement parser utilities
-6. 🔄 Begin Phase 5: Export Format Extensions
-   - Implement PDF export with TOC navigation
-   - Implement Markdown export with chapters
-   - Implement EPUB conversion
+6. ✅ Export format extensions complete (Phase 5)
+   - ✅ Plain text export with chapter headers
+   - ✅ PDF export with TOC bookmarks
+   - ✅ Searchable PDF with OCR text layer
+   - ✅ Markdown export with YAML front matter
+   - ✅ EPUB export via Calibre
+   - ✅ Multi-format export support
+7. 🔄 Begin Phase 6-7: Browser Automation & Integration
+   - Implement Playwright-based automation
+   - Screenshot capture and navigation
+   - Integrate OCR, metadata, and export pipeline
 
 ## Known Issues
 
