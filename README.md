@@ -2,9 +2,9 @@
 
 > Export any Kindle book you own as text, PDF, EPUB, Markdown, or as a custom AI-narrated audiobook. 🚀
 
-**Status**: 🎯 Alpha - Production Ready!
+**Status**: 🔍 Beta - Ready for Public Testing!
 
-[![Version](https://img.shields.io/badge/version-0.1.0--alpha-blue.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-0.1.0--beta-blue.svg)](package.json)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](tsconfig.json)
 
@@ -484,8 +484,8 @@ Special thanks to:
 
 ---
 
-**Current Version**: 0.1.0-alpha
-**Status**: 🎯 Production Ready (Alpha Testing)
+**Current Version**: 0.1.0-beta
+**Status**: 🔍 Beta - Ready for Public Testing
 **Last Updated**: 2025-11-29
 
 ---

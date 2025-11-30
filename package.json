@@ -1,6 +1,6 @@
 {
   "name": "kindle-exporter",
-  "version": "0.1.0",
+  "version": "0.1.0-beta",
   "description": "Export any Kindle book you own as text, PDF, EPUB, Markdown, or as a custom AI-narrated audiobook",
   "author": "Jason Richardson",
   "license": "MIT",
