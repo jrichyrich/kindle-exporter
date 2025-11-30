@@ -7,9 +7,11 @@
 import { Command } from 'commander'
 import chalk from 'chalk'
 import dotenv from 'dotenv'
-import ora from 'ora'
-// Import types for future use
-// import type { CaptureMode, ExportFormat, OcrEngine } from './types.js'
+import {
+  orchestrateBookExport,
+  type OrchestratorOptions
+} from './orchestrator.js'
+import type { ExportFormat } from './types.js'
 
 // Load environment variables
 dotenv.config()
@@ -90,60 +92,138 @@ program
 
 program.parse(process.argv)
 
-// Options will be used in future implementation
-// const options = program.opts()
+const options = program.opts()
+
+/**
+ * Parse export format string into array of ExportFormat
+ */
+function parseFormats(formatStr: string): ExportFormat[] {
+  const formats = formatStr.split(',').map((f) => f.trim().toLowerCase())
+  const validFormats: ExportFormat[] = []
+
+  for (const format of formats) {
+    if (
+      format === 'text' ||
+      format === 'pdf' ||
+      format === 'pdf-ocr' ||
+      format === 'markdown' ||
+      format === 'epub' ||
+      format === 'audio'
+    ) {
+      validFormats.push(format as ExportFormat)
+    } else {
+      console.warn(
+        chalk.yellow(`Warning: Unknown format "${format}" - ignoring`)
+      )
+    }
+  }
+
+  return validFormats
+}
 
 /**
  * Main CLI execution
  */
 async function main() {
-  const spinner = ora(chalk.cyan('Initializing Kindle Exporter...')).start()
+  console.log(chalk.bold.cyan('\n📚 Kindle Exporter v0.1.0-alpha\n'))
+
+  // Validate required options
+  if (!options.bookTitle && !options.asin) {
+    console.error(
+      chalk.red('Error: Either --book-title or --asin must be specified')
+    )
+    process.exitCode = 1
+    return
+  }
+
+  // Parse formats
+  const formats = parseFormats(options.format || 'text')
+  if (formats.length === 0) {
+    console.error(
+      chalk.red('Error: At least one valid export format is required')
+    )
+    process.exitCode = 1
+    return
+  }
+
+  // Build orchestrator options
+  const orchestratorOptions: OrchestratorOptions = {
+    bookTitle: options.bookTitle,
+    asin: options.asin,
+    formats,
+    outputDir: options.output || './exports',
+    headful: options.headful || false,
+    dryRun: options.dryRun || false,
+    maxPages: options.maxPages,
+    resume: options.resumeFrom !== undefined,
+    ocr: {
+      engine: options.ocr,
+      lang: options.lang,
+      batchSize: options.ocrConcurrency || 4
+    }
+  }
+
+  // Display configuration
+  console.log(chalk.bold('Configuration:'))
+  console.log(
+    chalk.gray('  Book:'),
+    options.bookTitle || `ASIN ${options.asin}`
+  )
+  console.log(chalk.gray('  Formats:'), formats.join(', '))
+  console.log(chalk.gray('  Output:'), orchestratorOptions.outputDir)
+  if (orchestratorOptions.ocr?.engine) {
+    console.log(chalk.gray('  OCR Engine:'), orchestratorOptions.ocr.engine)
+  }
+  if (orchestratorOptions.maxPages) {
+    console.log(chalk.gray('  Max Pages:'), orchestratorOptions.maxPages)
+  }
+  console.log()
 
   try {
-    // TODO: Implement actual functionality
-    // This is the foundation - implementation will follow the merge plan
+    // Run the orchestrator
+    const result = await orchestrateBookExport(orchestratorOptions)
 
-    spinner.info(chalk.yellow('🚧 Kindle Exporter is currently in development'))
-    console.log()
-    console.log(
-      chalk.bold('Project Status:'),
-      chalk.cyan('Phase 1 - Foundation Setup')
-    )
-    console.log(chalk.bold('Version:'), '0.1.0-pre-alpha')
-    console.log()
-    console.log(
-      chalk.gray('Following the comprehensive merge plan in docs/MERGE_PLAN.md')
-    )
-    console.log()
-    console.log(chalk.green('✓'), 'Project structure created')
-    console.log(chalk.green('✓'), 'Dependencies installed')
-    console.log(chalk.green('✓'), 'Base TypeScript files created')
-    console.log(chalk.yellow('⧗'), 'OCR providers implementation (Phase 3)')
-    console.log(chalk.yellow('⧗'), 'Metadata extraction (Phase 4)')
-    console.log(chalk.yellow('⧗'), 'Export formats (Phase 5)')
-    console.log()
-    console.log(
-      chalk.blue('Repository:'),
-      'https://github.com/jrichyrich/kindle-exporter'
-    )
-    console.log(chalk.blue('Documentation:'), 'docs/MERGE_PLAN.md')
-    console.log()
-
-    spinner.succeed(chalk.green('Foundation setup complete!'))
-
-    console.log()
-    console.log(chalk.bold.cyan('Next Steps:'))
-    console.log('  1. Complete Phase 1 (Days 1-5): Type system integration')
-    console.log('  2. Phase 2-3 (Days 5-10): OCR provider integration')
-    console.log('  3. Phase 4 (Days 10-14): Metadata extraction')
-    console.log('  4. Phase 5-7 (Days 14-28): Export formats & UX')
-    console.log('  5. Phase 8-10 (Days 28-40): Testing, docs, release')
-    console.log()
+    // Display results
+    if (result.success) {
+      console.log()
+      console.log(chalk.green.bold('✨ Export successful!'))
+      console.log()
+      console.log(chalk.bold('Summary:'))
+      console.log(chalk.gray('  Book:'), chalk.cyan(result.bookTitle))
+      console.log(chalk.gray('  Pages:'), chalk.cyan(result.totalPages))
+      console.log(
+        chalk.gray('  Formats:'),
+        chalk.cyan(result.exportedFormats.join(', '))
+      )
+      console.log(
+        chalk.gray('  Duration:'),
+        chalk.cyan(`${(result.duration / 1000).toFixed(1)}s`)
+      )
+      console.log()
+      console.log(
+        chalk.gray('  Output:'),
+        chalk.cyan(`${orchestratorOptions.outputDir}/${result.bookTitle}`)
+      )
+      console.log()
+    } else {
+      console.log()
+      console.log(chalk.red.bold('❌ Export failed'))
+      console.log()
+      console.log(chalk.red('Error:'), result.error)
+      console.log()
+      process.exitCode = 1
+    }
   } catch (error) {
-    spinner.fail(chalk.red('Error during initialization'))
+    console.error()
+    console.error(chalk.red.bold('❌ Fatal error during export'))
+    console.error()
     console.error(
       chalk.red(error instanceof Error ? error.message : 'Unknown error')
     )
+    if (error instanceof Error && error.stack) {
+      console.error(chalk.gray(error.stack))
+    }
+    console.error()
     process.exitCode = 1
   }
 }
