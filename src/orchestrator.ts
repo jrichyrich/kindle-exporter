@@ -154,7 +154,8 @@ export async function orchestrateBookExport(
       config,
       options,
       metadata,
-      runState.lastPage || 0
+      runState.lastPage || 0,
+      spinner // Pass spinner for progress updates
     )
 
     runState = updateRunState(runState, {
@@ -261,10 +262,12 @@ async function captureAndOcrPages(
   config: ToolConfig,
   options: OrchestratorOptions,
   metadata: BookMetadata,
-  startPage: number
+  startPage: number,
+  spinner: any // ora spinner for progress updates
 ) {
   const pages: ContentChunk[] = []
   let pageNumber = startPage || 1
+  const startTime = Date.now()
 
   // Create OCR provider
   const ocrConfig: OcrProviderConfig = {
@@ -319,6 +322,15 @@ async function captureAndOcrPages(
       pageChunk.page,
       pageChunk.screenshot
     )
+
+    // Update progress display
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
+    const avgTimePerPage = (Date.now() - startTime) / pages.length / 1000
+    const progressText = options.maxPages
+      ? `Page ${pages.length}/${options.maxPages} | ${elapsed}s elapsed | ${avgTimePerPage.toFixed(1)}s/page avg`
+      : `Page ${pages.length} | ${elapsed}s elapsed | ${avgTimePerPage.toFixed(1)}s/page avg`
+
+    spinner.text = chalk.cyan(progressText)
 
     // Check if we should stop
     const shouldStop =

@@ -14,15 +14,19 @@ Kindle Exporter is a comprehensive tool that exports your Kindle books using bro
 
 ### Key Features
 
-- 🎯 **Multiple Export Formats**: Text, PDF (with TOC), Searchable PDF, EPUB, Markdown
+- 🎯 **Multiple Export Formats**: Text, PDF (with TOC), **Searchable PDF**, EPUB, Markdown
+- 🔍 **Searchable PDFs**: Visible screenshots with invisible OCR text layer for perfect searchability
+  - **Simple overlay**: LiveText/Vision models (fast, good for reading)
+  - **Positioned text**: Tesseract hOCR (exact word alignment, perfect text selection)
 - 🔄 **Resume Capability**: Pick up where you left off if interrupted
+- 📊 **Real-time Progress**: Live updates showing current page, elapsed time, and average speed
 - 🤖 **Flexible OCR Options**:
   - **Local**: Live Text (macOS), Tesseract (cross-platform)
   - **Cloud**: OpenAI Vision Models (GPT-4 Vision)
-  - **Local Vision Models**: Qwen2-VL, LLaMA Vision, Pixtral (FREE, high accuracy!)
+  - **Local Vision Models**: Qwen2.5-VL 7B via Ollama (FREE, high accuracy!)
 - 📚 **Rich Metadata**: Full table of contents, chapter boundaries, Kindle sync positions
 - 🎨 **Smart Screenshot Capture**: Canvas clipping to exclude UI elements
-- 💻 **Clean CLI**: Simple command-line interface with progress indicators
+- 💻 **Clean CLI**: Simple command-line interface with real-time progress tracking
 - 🌐 **Browser Automation**: Uses Playwright for reliable Kindle Cloud Reader access
 - ✨ **Production Ready**: Tested with real books, all core features working
 
@@ -68,11 +72,19 @@ node dist/cli.js \
   --format pdf \
   --ocr livetext
 
+# Export as searchable PDF (recommended!)
+# Images with invisible OCR text - perfect for reading and searching
+node dist/cli.js \
+  --asin B0DYJFQQPX \
+  --book-title "My Book" \
+  --format pdf-ocr \
+  --ocr tesseract
+
 # Export with multiple formats
 node dist/cli.js \
   --asin B0DYJFQQPX \
   --book-title "My Book" \
-  --format text,pdf,markdown \
+  --format text,pdf-ocr,markdown \
   --ocr livetext
 
 # Run in headful mode to see what's happening
@@ -101,9 +113,10 @@ The ASIN is Amazon's unique book identifier. To find it:
 
 - `--asin <asin>` - Amazon ASIN of the book to export
 - `--book-title <title>` - Title of the book (used for folder naming)
-- `--format <formats>` - Export format(s): `text`, `pdf`, `markdown`, `epub`, `searchable-pdf`
-  - Multiple formats: `--format text,pdf,markdown`
-- `--ocr <provider>` - OCR provider: `livetext`, `tesseract`, `openai`, `qwen`, `llama`, `pixtral`
+- `--format <formats>` - Export format(s): `text`, `pdf`, `pdf-ocr`, `markdown`, `epub`
+  - Multiple formats: `--format text,pdf-ocr,markdown`
+  - `pdf-ocr`: Searchable PDF with visible images and invisible text layer
+- `--ocr <provider>` - OCR provider: `livetext`, `tesseract`, `openai`, `local-vision`
 
 #### Optional Options
 
@@ -152,20 +165,37 @@ export OPENAI_API_KEY="sk-..."
 node dist/cli.js --asin <asin> --book-title "Book" --format text --ocr openai
 ```
 
-#### 4. Local Vision Models (Advanced)
+#### 4. Local Vision Models via Ollama (Advanced)
 
-FREE alternatives to OpenAI. Requires local model setup with Ollama or similar.
+FREE alternative to OpenAI with excellent accuracy! Requires Ollama and model download.
 
 ```bash
-# Qwen2-VL (recommended)
-node dist/cli.js --asin <asin> --book-title "Book" --format text --ocr qwen
+# Install Ollama
+# Visit https://ollama.com and download for your platform
 
-# LLaMA Vision
-node dist/cli.js --asin <asin> --book-title "Book" --format text --ocr llama
+# Pull the Qwen2.5-VL 7B model (recommended - best balance of speed/quality)
+ollama pull qwen2.5-vl:7b
 
-# Pixtral
-node dist/cli.js --asin <asin> --book-title "Book" --format text --ocr pixtral
+# Start Ollama server (if not already running)
+ollama serve
+
+# Export with local vision model
+node dist/cli.js \
+  --asin <asin> \
+  --book-title "Book" \
+  --format pdf-ocr \
+  --ocr local-vision
+
+# The model will be used automatically via Ollama
+# Performance: ~35s per page (high quality, FREE!)
 ```
+
+**Benefits of Local Vision Models:**
+- ✅ **FREE** - No API costs, unlimited usage
+- ✅ **High Quality** - Superior formatting and punctuation vs LiveText
+- ✅ **Private** - All processing happens locally
+- ❌ **Slower** - ~35s/page vs 1.6s/page for LiveText
+- ❌ **Requires** - Good CPU/GPU and ~4GB model download
 
 ### Export Formats
 
@@ -183,12 +213,23 @@ PDF with clickable bookmarks for each chapter.
 --format pdf
 ```
 
-#### Searchable PDF
-PDF with embedded OCR text layer for searching.
+#### Searchable PDF (Recommended!)
+PDF with visible page images and invisible OCR text layer - combines perfect image quality with full searchability and text selection.
 
 ```bash
---format searchable-pdf
+--format pdf-ocr
 ```
+
+**Two modes based on OCR engine:**
+- **LiveText/OpenAI/Local-Vision**: Simple text overlay (fast, good for reading/searching)
+- **Tesseract**: Word-level positioning (exact text alignment, perfect highlighting)
+
+**Why use Searchable PDF?**
+- ✅ See actual book pages (not reformatted text)
+- ✅ Search and copy text like a regular PDF
+- ✅ Preserves original formatting, images, and layout
+- ✅ Smaller file size than image-only PDFs
+- ✅ Works in all PDF readers (not macOS-specific)
 
 #### Markdown (`.md`)
 Markdown with YAML front matter containing metadata.
