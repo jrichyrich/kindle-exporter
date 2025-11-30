@@ -83,9 +83,11 @@ This project is merging two existing Kindle export tools into a unified, feature
 - [x] **Quality Validation:** Screenshots clipped to canvas only
 
 ### Completed (Phase 10 - Documentation & Polish) ✅
-- [x] **OCR Optimization:** Canvas widening for single-column layout (1.0-1.08x zoom, 90-95% width)
-- [x] **Automated Canvas Widening:** Runs automatically on book open (no CLI flag needed)
-- [x] **OCR Validation:** Verified improved OCR quality with widened canvas
+- [x] **Bug Fix #10:** Text cutoff on page 1 - Severe word truncation on first page
+- [x] **Bug Fix #11:** Canvas widening removal - Reverted to natural layout for consistency
+- [x] **Multi-page Testing:** Validated 3, 5, and 10-page exports successfully
+- [x] **Width Consistency:** All pages now 1536px with zero text cutoff
+- [x] **Debug Logging Cleanup:** Removed development console.log statements
 - [x] **README Documentation:** Complete usage guide with all features documented
 - [x] **Examples Added:** Real-world usage examples for all OCR providers and formats
 - [x] **Troubleshooting Guide:** Comprehensive troubleshooting section with solutions
@@ -227,21 +229,24 @@ Legend:
 
 **Minor:**
 - Metadata save error in some edge cases (EISDIR) - doesn't affect exports
-- Some UI text may still appear in OCR results (e.g., page numbers, chapter indicators)
+- Some UI text may appear in OCR results (e.g., page numbers)
   - Canvas clipping eliminates most UI elements
-  - Minor artifacts are acceptable and don't affect readability
+  - Minor artifacts don't affect readability
 
 **Tested and Working:**
-- ✅ Multi-page navigation and pagination
+- ✅ Multi-page navigation (keyboard-based, reliable)
 - ✅ Screenshot capture with canvas clipping
-- ✅ Single-column layout optimization
-- ✅ Resume functionality (via --start-page)
+- ✅ Consistent page widths (1536px across all pages)
+- ✅ Zero text cutoff on all pages
+- ✅ Clean OCR output with LiveText
 - ✅ All export formats (text, PDF, markdown, EPUB, searchable PDF)
 - ✅ All OCR providers (LiveText, Tesseract, OpenAI, Local Vision Models)
+- ✅ 3, 5, and 10-page exports validated
 
 **To Investigate:**
-- Long book exports (200+ pages)
-- Different book layouts (textbooks, comics, magazines)
+- Long book exports (50+ pages)
+- Different book layouts (textbooks, technical books, illustrated)
+- Resume functionality with partial exports
 - Network interruption handling
 
 ## Contributing

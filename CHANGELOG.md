@@ -79,6 +79,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Bug Fix #5**: Screenshot capture - Viewport-based approach with canvas clipping
 - **Bug Fix #6**: Metadata save path - Proper file path construction
 - **Bug Fix #7**: Book info structure - Flexible response handling for different metadata formats
+- **Bug Fix #8**: Multi-page navigation - Keyboard navigation replaces brittle button selectors
+- **Bug Fix #9**: Folder naming consistency - Screenshots and metadata now use same bookTitle
+- **Bug Fix #10**: Text cutoff on page 1 - Severe word truncation causing unreadable OCR
+- **Bug Fix #11**: Canvas widening removal - Reverted to natural layout for consistency
 
 ### Technical Details
 - TypeScript 5.0 with strict type checking
@@ -90,10 +94,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ESLint + Prettier for code quality
 - Git hooks for pre-commit checks
 
+### Changed (Post-Alpha Updates)
+- Removed canvas widening feature due to text cutoff issues on page 1
+- Reverted to natural Kindle Cloud Reader layout (1536px consistent width)
+- Cleaned up debug logging for production readiness
+- Updated documentation to reflect current feature set
+
 ### Known Issues
 - Metadata save error in some edge cases (EISDIR) - doesn't affect exports
-- Minor UI text artifacts may appear in OCR results (page numbers, chapter indicators)
-- Long books (200+ pages) not yet tested at scale
+- Minor UI text artifacts may appear in OCR results (page numbers)
+- Long books (50+ pages) not yet tested at scale
 - Network interruption handling needs improvement
 
 ### Breaking Changes

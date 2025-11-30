@@ -174,18 +174,10 @@ export async function getCurrentPageNumber(page: Page): Promise<number | null> {
  * @returns True if on last page
  */
 export async function isLastPage(_page: Page): Promise<boolean> {
-  try {
-    // Since we're using keyboard navigation, we can't reliably detect the last page
-    // via button state. Instead, we'll rely on the navigation failure to stop the loop.
-    // For now, always return false and let navigateNextPage handle detection.
-    console.log(
-      'isLastPage: Using navigation-based detection (returning false)'
-    )
-    return false
-  } catch (error) {
-    console.warn('isLastPage error:', error)
-    return false
-  }
+  // Since we're using keyboard navigation, we can't reliably detect the last page
+  // via button state. Instead, we'll rely on the navigation failure to stop the loop.
+  // For now, always return false and let navigateNextPage handle detection.
+  return false
 }
 
 /**
@@ -200,25 +192,21 @@ export async function navigateNextPage(
 ): Promise<boolean> {
   try {
     // Strategy 1: Try keyboard navigation (most reliable)
-    console.log('navigateNextPage: Trying keyboard navigation (Right Arrow)')
     await page.keyboard.press('ArrowRight')
 
     // Wait for page transition with human-like delay
     const delay = randomDelay(config.delayMinMs, config.delayMaxMs)
-    console.log(`navigateNextPage: Waiting ${delay}ms for page transition`)
     await page.waitForTimeout(delay)
 
     // Wait for new content to load
     await waitForPageReady(page, 10000)
 
-    console.log('navigateNextPage: Successfully navigated to next page')
     return true
   } catch (error) {
     console.warn('navigateNextPage: Failed to navigate to next page:', error)
 
     // Strategy 2: Fallback to clicking right side of screen
     try {
-      console.log('navigateNextPage: Fallback - clicking right side of screen')
       const viewport = page.viewportSize()
       if (viewport) {
         // Click on the right 20% of the screen, middle height
@@ -227,7 +215,6 @@ export async function navigateNextPage(
           randomDelay(config.delayMinMs, config.delayMaxMs)
         )
         await waitForPageReady(page, 10000)
-        console.log('navigateNextPage: Fallback navigation succeeded')
         return true
       }
     } catch (fallbackError) {
